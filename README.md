@@ -1,70 +1,134 @@
-# Getting Started with Create React App
+# Hungarian Immigration Document Tracker
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React-based progress tracker designed for expats moving to Hungary. This application helps users organize and track the documents required for the Enter Hungary portal, ensuring a smooth immigration process.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Organized Checklist**: Documents are grouped by category (Essential, Financial, Employment, Personal, Administrative)
+- **Progress Tracking**: Visual progress bar shows completion percentage
+- **Local Storage Persistence**: Your progress is automatically saved in your browser
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Clean UI**: Modern, intuitive interface with gradient design
 
-### `npm start`
+## Required Documents Tracked
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Essential Documents
+- Valid Passport
+- Proof of Accommodation
+- Health Insurance
+- Passport Photos
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Financial Documents
+- Bank Statements (3-6 months)
 
-### `npm test`
+### Employment Documents
+- Employment Contract
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Personal Documents
+- Birth Certificate (apostilled with Hungarian translation)
+- Criminal Background Check
+- Marriage Certificate (if applicable)
 
-### `npm run build`
+### Administrative
+- Tax Registration (Hungarian tax ID)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Tech Stack
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **React** (v19.2.3) - UI framework
+- **CSS3** - Styling with modern gradients and animations
+- **localStorage** - Client-side data persistence
+- **Create React App** - Build tooling
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Getting Started
 
-### `npm run eject`
+### Installation
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. Clone the repository:
+```bash
+git clone https://github.com/your-username/hungary-tracker.git
+cd hungary-tracker
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+2. Install dependencies:
+```bash
+npm install
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+3. Start the development server:
+```bash
+npm start
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser. The page will reload when you make changes.
 
-## Learn More
+## Usage
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1. **Check off documents** as you gather them by clicking the checkboxes
+2. **Track your progress** with the visual progress bar at the top
+3. **Reset progress** if needed using the Reset Progress button
+4. Your progress is **automatically saved** and will persist between browser sessions
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## How It Works
 
-### Code Splitting
+The application uses React hooks for state management:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- `useState` - Manages the document checklist state
+- `useEffect` - Syncs state with localStorage for persistence
 
-### Analyzing the Bundle Size
+When you check or uncheck a document:
+1. The component state updates
+2. The change is saved to localStorage
+3. The progress bar recalculates
+4. The UI updates with smooth transitions
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Building for Production
 
-### Making a Progressive Web App
+```bash
+npm run build
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+This creates an optimized production build in the `build/` folder ready for deployment.
 
-### Advanced Configuration
+## Project Structure
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```
+src/
+├── components/
+│   ├── ImmigrationTracker.js    # Main tracker component
+│   └── ImmigrationTracker.css   # Component styling
+├── App.js                       # Root component
+├── App.css                      # App-level styles
+└── index.js                     # Entry point
+```
 
-### Deployment
+## Future Enhancements
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Potential features for future versions:
+- Add notes for each document
+- Set reminder dates
+- Upload document scans
+- Export progress as PDF
+- Multi-language support (English/Hungarian)
 
-### `npm run build` fails to minify
+## About
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This project was created to help expats navigate the Hungarian immigration process. It demonstrates practical React skills including:
+- Component-based architecture
+- React Hooks (useState, useEffect)
+- Browser localStorage API
+- Responsive CSS design
+- User experience design
+
+Built by a developer committed to relocating to Hungary and contributing to the local tech community.
+
+## License
+
+This project is open source and available under the MIT License.
+
+## Contributing
+
+Suggestions and contributions are welcome! Feel free to open an issue or submit a pull request.
+
+---
+
+**Note**: This tracker is for personal organization purposes. Always verify current requirements with official Hungarian immigration authorities and the Enter Hungary portal.
