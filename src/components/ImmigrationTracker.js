@@ -1,5 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import './ImmigrationTracker.css';
+
+const STORAGE_KEY = 'hungaryDocuments';
+const SCHEMA_VERSION_KEY = 'hungaryDocumentsVersion';
+const CURRENT_SCHEMA_VERSION = 1;
 
 const ImmigrationTracker = () => {
   const initialDocuments = [
@@ -76,16 +80,35 @@ const ImmigrationTracker = () => {
   ];
 
   const [documents, setDocuments] = useState(() => {
-    const saved = localStorage.getItem('hungaryDocuments');
-    return saved ? JSON.parse(saved) : initialDocuments;
+    const savedVersion = localStorage.getItem(SCHEMA_VERSION_KEY);
+    const saved = localStorage.getItem(STORAGE_KEY);
+    
+    // If no saved data or schema version mismatch, use initial documents
+    if (!saved || savedVersion !== String(CURRENT_SCHEMA_VERSION)) {
+      return initialDocuments;
+    }
+    
+    try {
+      const parsedData = JSON.parse(saved);
+      
+      // Merge saved completion status with current document schema
+      // This preserves user progress while updating document definitions
+      return initialDocuments.map(doc => {
+        const savedDoc = parsedData.find(d => d.id === doc.id);
+        return savedDoc ? { ...doc, completed: savedDoc.completed } : doc;
+      });
+    } catch {
+      return initialDocuments;
+    }
   });
 
   useEffect(() => {
-    localStorage.setItem('hungaryDocuments', JSON.stringify(documents));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(documents));
+    localStorage.setItem(SCHEMA_VERSION_KEY, String(CURRENT_SCHEMA_VERSION));
   }, [documents]);
 
   const toggleDocument = (id) => {
-    setDocuments(documents.map(doc =>
+    setDocuments(prev => prev.map(doc =>
       doc.id === id ? { ...doc, completed: !doc.completed } : doc
     ));
   };
@@ -96,21 +119,21 @@ const ImmigrationTracker = () => {
     }
   };
 
-  const calculateProgress = () => {
+  const progress = useMemo(() => {
     const completed = documents.filter(doc => doc.completed).length;
     return Math.round((completed / documents.length) * 100);
-  };
+  }, [documents]);
 
-  const groupedDocuments = documents.reduce((groups, doc) => {
-    const category = doc.category;
-    if (!groups[category]) {
-      groups[category] = [];
-    }
-    groups[category].push(doc);
-    return groups;
-  }, {});
-
-  const progress = calculateProgress();
+  const groupedDocuments = useMemo(() => {
+    return documents.reduce((groups, doc) => {
+      const category = doc.category;
+      if (!groups[category]) {
+        groups[category] = [];
+      }
+      groups[category].push(doc);
+      return groups;
+    }, {});
+  }, [documents]);
 
   return (
     <div className="tracker-container">
