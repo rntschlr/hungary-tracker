@@ -5,106 +5,107 @@ const STORAGE_KEY = 'hungaryDocuments';
 const SCHEMA_VERSION_KEY = 'hungaryDocumentsVersion';
 const CURRENT_SCHEMA_VERSION = 1;
 
-const ImmigrationTracker = () => {
-  const initialDocuments = [
-    {
-      id: 1,
-      title: 'Valid Passport',
-      description: 'Passport with at least 6 months validity remaining',
-      category: 'Essential Documents',
-      completed: false
-    },
-    {
-      id: 2,
-      title: 'Proof of Accommodation',
-      description: 'Lease agreement or property ownership documents',
-      category: 'Essential Documents',
-      completed: false
-    },
-    {
-      id: 3,
-      title: 'Bank Statements',
-      description: 'Last 3-6 months showing sufficient funds',
-      category: 'Financial Documents',
-      completed: false
-    },
-    {
-      id: 4,
-      title: 'Employment Contract',
-      description: 'Signed employment contract from Hungarian employer',
-      category: 'Employment Documents',
-      completed: false
-    },
-    {
-      id: 5,
-      title: 'Health Insurance',
-      description: 'Valid health insurance coverage for Hungary',
-      category: 'Essential Documents',
-      completed: false
-    },
-    {
-      id: 6,
-      title: 'Birth Certificate',
-      description: 'Apostilled birth certificate with Hungarian translation',
-      category: 'Personal Documents',
-      completed: false
-    },
-    {
-      id: 7,
-      title: 'Criminal Background Check',
-      description: 'Recent criminal background check from home country',
-      category: 'Personal Documents',
-      completed: false
-    },
-    {
-      id: 8,
-      title: 'Passport Photos',
-      description: 'Recent passport-sized photos (biometric)',
-      category: 'Essential Documents',
-      completed: false
-    },
-    {
-      id: 9,
-      title: 'Marriage Certificate',
-      description: 'If applicable, apostilled with Hungarian translation',
-      category: 'Personal Documents',
-      completed: false
-    },
-    {
-      id: 10,
-      title: 'Tax Registration',
-      description: 'Hungarian tax ID number (adószám)',
-      category: 'Administrative',
-      completed: false
-    }
-  ];
+const INITIAL_DOCUMENTS = [
+  {
+    id: 1,
+    title: 'Valid Passport',
+    description: 'Passport with at least 6 months validity remaining',
+    category: 'Essential Documents',
+    completed: false
+  },
+  {
+    id: 2,
+    title: 'Proof of Accommodation',
+    description: 'Lease agreement or property ownership documents',
+    category: 'Essential Documents',
+    completed: false
+  },
+  {
+    id: 3,
+    title: 'Bank Statements',
+    description: 'Last 3-6 months showing sufficient funds',
+    category: 'Financial Documents',
+    completed: false
+  },
+  {
+    id: 4,
+    title: 'Employment Contract',
+    description: 'Signed employment contract from Hungarian employer',
+    category: 'Employment Documents',
+    completed: false
+  },
+  {
+    id: 5,
+    title: 'Health Insurance',
+    description: 'Valid health insurance coverage for Hungary',
+    category: 'Essential Documents',
+    completed: false
+  },
+  {
+    id: 6,
+    title: 'Birth Certificate',
+    description: 'Apostilled birth certificate with Hungarian translation',
+    category: 'Personal Documents',
+    completed: false
+  },
+  {
+    id: 7,
+    title: 'Criminal Background Check',
+    description: 'Recent criminal background check from home country',
+    category: 'Personal Documents',
+    completed: false
+  },
+  {
+    id: 8,
+    title: 'Passport Photos',
+    description: 'Recent passport-sized photos (biometric)',
+    category: 'Essential Documents',
+    completed: false
+  },
+  {
+    id: 9,
+    title: 'Marriage Certificate',
+    description: 'If applicable, apostilled with Hungarian translation',
+    category: 'Personal Documents',
+    completed: false
+  },
+  {
+    id: 10,
+    title: 'Tax Registration',
+    description: 'Hungarian tax ID number (adószám)',
+    category: 'Administrative',
+    completed: false
+  }
+];
 
+const ImmigrationTracker = () => {
   const [documents, setDocuments] = useState(() => {
-    const savedVersion = localStorage.getItem(SCHEMA_VERSION_KEY);
-    const saved = localStorage.getItem(STORAGE_KEY);
-    
-    // If no saved data or schema version mismatch, use initial documents
-    if (!saved || savedVersion !== String(CURRENT_SCHEMA_VERSION)) {
-      return initialDocuments;
-    }
-    
     try {
+      const savedVersion = localStorage.getItem(SCHEMA_VERSION_KEY);
+      const saved = localStorage.getItem(STORAGE_KEY);
+
+      if (!saved || savedVersion !== String(CURRENT_SCHEMA_VERSION)) {
+        return INITIAL_DOCUMENTS;
+      }
+
       const parsedData = JSON.parse(saved);
-      
-      // Merge saved completion status with current document schema
-      // This preserves user progress while updating document definitions
-      return initialDocuments.map(doc => {
+
+      return INITIAL_DOCUMENTS.map(doc => {
         const savedDoc = parsedData.find(d => d.id === doc.id);
         return savedDoc ? { ...doc, completed: savedDoc.completed } : doc;
       });
     } catch {
-      return initialDocuments;
+      return INITIAL_DOCUMENTS;
     }
   });
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(documents));
-    localStorage.setItem(SCHEMA_VERSION_KEY, String(CURRENT_SCHEMA_VERSION));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(documents));
+      localStorage.setItem(SCHEMA_VERSION_KEY, String(CURRENT_SCHEMA_VERSION));
+    } catch {
+      // localStorage unavailable (private browsing, storage full, etc.)
+    }
   }, [documents]);
 
   const toggleDocument = (id) => {
@@ -115,7 +116,7 @@ const ImmigrationTracker = () => {
 
   const resetProgress = () => {
     if (window.confirm('Are you sure you want to reset all progress?')) {
-      setDocuments(initialDocuments);
+      setDocuments(INITIAL_DOCUMENTS);
     }
   };
 
@@ -149,9 +150,8 @@ const ImmigrationTracker = () => {
           <div
             className="progress-bar-fill"
             style={{ width: `${progress}%` }}
-          >
-            <span className="progress-text">{progress}%</span>
-          </div>
+          />
+          <span className="progress-text">{progress}%</span>
         </div>
         <p className="progress-info">
           {documents.filter(d => d.completed).length} of {documents.length} documents completed
