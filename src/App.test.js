@@ -19,6 +19,7 @@ test('renders document categories', () => {
   expect(screen.getByText(/Financial Documents/i)).toBeInTheDocument();
   expect(screen.getByText(/Employment Documents/i)).toBeInTheDocument();
   expect(screen.getByText(/Personal Documents/i)).toBeInTheDocument();
+  expect(screen.getByText(/Administrative/i)).toBeInTheDocument();
 });
 
 test('renders reset button', () => {
