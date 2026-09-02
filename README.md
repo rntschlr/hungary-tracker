@@ -46,7 +46,7 @@ A React-based progress tracker designed for expats moving to Hungary. This appli
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/hungary-tracker.git
+git clone https://github.com/rntschlr/hungary-tracker.git
 cd hungary-tracker
 ```
 

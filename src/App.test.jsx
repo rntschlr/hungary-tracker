@@ -37,3 +37,23 @@ test('updates and persists progress when a document is checked', async () => {
   expect(screen.getByRole('checkbox', { name: /valid passport/i })).toBeChecked();
   expect(screen.getByText('10%')).toBeInTheDocument();
 });
+
+test('renders every document category', () => {
+  render(<App />);
+
+  for (const category of [
+    /essential documents/i,
+    /financial documents/i,
+    /employment documents/i,
+    /personal documents/i,
+    /administrative/i,
+  ]) {
+    expect(screen.getByText(category)).toBeInTheDocument();
+  }
+});
+
+test('renders the reset button', () => {
+  render(<App />);
+
+  expect(screen.getByRole('button', { name: /reset progress/i })).toBeInTheDocument();
+});
