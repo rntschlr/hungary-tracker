@@ -34,10 +34,11 @@ A React-based progress tracker designed for expats moving to Hungary. This appli
 
 ## Tech Stack
 
-- **React** (v19.2.3) - UI framework
+- **React** - UI framework
+- **Vite** - Fast development server and production bundler
+- **Vitest + Testing Library** - Component and persistence tests
 - **CSS3** - Styling with modern gradients and animations
 - **localStorage** - Client-side data persistence
-- **Create React App** - Build tooling
 
 ## Getting Started
 
@@ -56,10 +57,16 @@ npm install
 
 3. Start the development server:
 ```bash
-npm start
+npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser. The page will reload when you make changes.
+Open [http://localhost:5173](http://localhost:5173) to view it in your browser. The page will reload when you make changes.
+
+### Test
+
+```bash
+npm test
+```
 
 ## Usage
 
@@ -87,18 +94,18 @@ When you check or uncheck a document:
 npm run build
 ```
 
-This creates an optimized production build in the `build/` folder ready for deployment.
+This creates an optimized production build in the `dist/` folder ready for deployment.
 
 ## Project Structure
 
 ```
 src/
 ├── components/
-│   ├── ImmigrationTracker.js    # Main tracker component
+│   ├── ImmigrationTracker.jsx   # Main tracker component
 │   └── ImmigrationTracker.css   # Component styling
-├── App.js                       # Root component
+├── App.jsx                      # Root component
 ├── App.css                      # App-level styles
-└── index.js                     # Entry point
+└── index.jsx                    # Entry point
 ```
 
 ## Future Enhancements

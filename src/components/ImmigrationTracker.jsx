@@ -174,9 +174,15 @@ const ImmigrationTracker = () => {
                       checked={doc.completed}
                       onChange={() => toggleDocument(doc.id)}
                       className="document-checkbox"
+                      aria-labelledby={`document-title-${doc.id}`}
                     />
                     <div className="document-content">
-                      <h3 className="document-title">{doc.title}</h3>
+                      <h3
+                        id={`document-title-${doc.id}`}
+                        className="document-title"
+                      >
+                        {doc.title}
+                      </h3>
                       <p className="document-description">{doc.description}</p>
                     </div>
                   </label>
