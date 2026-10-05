@@ -6,7 +6,8 @@ A React-based progress tracker designed for expats moving to Hungary. This appli
 
 - **Organized Checklist**: Documents are grouped by category (Essential, Financial, Employment, Personal, Administrative)
 - **Progress Tracking**: Visual progress bar shows completion percentage
-- **Local Storage Persistence**: Your progress is automatically saved in your browser
+- **Local Storage Persistence**: Your progress is saved in your browser, with a visible warning if storage fails
+- **Portable Backups**: Download and restore validated JSON progress files without uploading documents
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
 - **Clean UI**: Modern, intuitive interface with gradient design
 
@@ -52,7 +53,7 @@ cd hungary-tracker
 
 2. Install dependencies:
 ```bash
-npm install
+npm ci
 ```
 
 3. Start the development server:
@@ -139,3 +140,16 @@ Suggestions and contributions are welcome! Feel free to open an issue or submit 
 ---
 
 **Note**: This tracker is for personal organization purposes. Always verify current requirements with official Hungarian immigration authorities and the Enter Hungary portal.
+
+## Reliability and deployment boundaries
+
+This is a browser-local application hosted on GitHub Pages. It has no account
+service, server API, or database and is not a multi-user full-stack service.
+Only document IDs and completion flags are saved; document scans are never uploaded.
+Use Download backup before clearing browser data or moving to another device.
+Restore requires confirmation and rejects corrupt or incompatible files.
+
+Use Node 22.13+ and `npm ci`. `npm run check` runs regression tests, a production
+build, and a dependency audit including development tools. Pull requests run
+checks without deployment permissions; only master can publish the static site.
+See [operations](docs/operations.md) for release verification and the account-backend boundary.
