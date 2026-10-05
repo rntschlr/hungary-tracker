@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import './ImmigrationTracker.css';
 
-const STORAGE_KEY = 'hungaryDocuments';
-const SCHEMA_VERSION_KEY = 'hungaryDocumentsVersion';
-const CURRENT_SCHEMA_VERSION = 1;
+import { readProgress, saveProgress, exportProgress, importProgress, MAX_BACKUP_BYTES } from '../lib/progress';
 
 const INITIAL_DOCUMENTS = [
   {
@@ -80,33 +78,45 @@ const INITIAL_DOCUMENTS = [
 
 const ImmigrationTracker = () => {
   const [documents, setDocuments] = useState(() => {
-    try {
-      const savedVersion = localStorage.getItem(SCHEMA_VERSION_KEY);
-      const saved = localStorage.getItem(STORAGE_KEY);
-
-      if (!saved || savedVersion !== String(CURRENT_SCHEMA_VERSION)) {
-        return INITIAL_DOCUMENTS;
-      }
-
-      const parsedData = JSON.parse(saved);
-
-      return INITIAL_DOCUMENTS.map(doc => {
-        const savedDoc = parsedData.find(d => d.id === doc.id);
-        return savedDoc ? { ...doc, completed: savedDoc.completed } : doc;
-      });
-    } catch {
-      return INITIAL_DOCUMENTS;
-    }
+    // Accessing the storage property itself can throw in restricted browsers.
+    try { return readProgress(INITIAL_DOCUMENTS, window.localStorage); }
+    catch { return INITIAL_DOCUMENTS; }
   });
+  const [storageAvailable, setStorageAvailable] = useState(true);
+  const [backupMessage, setBackupMessage] = useState('');
+  const fileInput = useRef(null);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(documents));
-      localStorage.setItem(SCHEMA_VERSION_KEY, String(CURRENT_SCHEMA_VERSION));
-    } catch {
-      // localStorage unavailable (private browsing, storage full, etc.)
-    }
+    try { setStorageAvailable(saveProgress(documents, window.localStorage)); }
+    catch { setStorageAvailable(false); }
   }, [documents]);
+
+  const downloadBackup = () => {
+    const url = URL.createObjectURL(new Blob([exportProgress(documents)], { type: 'application/json' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'hungary-tracker-progress.json';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
+  const restoreBackup = async (event) => {
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+    try {
+      if (file.size > MAX_BACKUP_BYTES) throw new Error('Backup is too large.');
+      const restored = importProgress(INITIAL_DOCUMENTS, await file.text());
+      if (!window.confirm('Replace your current progress with this backup?')) return;
+      setDocuments(restored);
+      setBackupMessage('Progress restored.');
+    } catch {
+      setBackupMessage('Could not restore. Choose a valid Hungary Tracker JSON backup under 16 KiB.');
+    }
+  };
 
   const toggleDocument = (id) => {
     setDocuments(prev => prev.map(doc =>
@@ -146,7 +156,8 @@ const ImmigrationTracker = () => {
       </header>
 
       <div className="progress-section">
-        <div className="progress-bar-container">
+        <div className="progress-bar-container" role="progressbar" aria-label="Document completion"
+          aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}>
           <div
             className="progress-bar-fill"
             style={{ width: `${progress}%` }}
@@ -157,6 +168,12 @@ const ImmigrationTracker = () => {
           {documents.filter(d => d.completed).length} of {documents.length} documents completed
         </p>
       </div>
+
+      {!storageAvailable && (
+        <p className="storage-warning" role="alert">
+          Your browser could not save progress. Download a backup before closing this page.
+        </p>
+      )}
 
       <div className="documents-section">
         {Object.keys(groupedDocuments).map(category => (
@@ -194,15 +211,22 @@ const ImmigrationTracker = () => {
       </div>
 
       <div className="actions-section">
+        <button className="backup-button" onClick={downloadBackup}>Download backup</button>
+        <button className="backup-button" onClick={() => fileInput.current?.click()}>Restore backup</button>
+        <input ref={fileInput} type="file" accept=".json,application/json" hidden
+          aria-label="Progress backup" onChange={restoreBackup} />
         <button onClick={resetProgress} className="reset-button">
           Reset Progress
         </button>
       </div>
 
+      <p className="backup-status" role="status">{backupMessage}</p>
+
       <footer className="tracker-footer">
         <p>
-          Built with React | Your progress is saved automatically in your browser
+          Progress stays in this browser. Backups let you transfer it to another device.
         </p>
+        <p>This is an organizational checklist. Verify requirements for your permit with the Hungarian immigration authority.</p>
       </footer>
     </div>
   );

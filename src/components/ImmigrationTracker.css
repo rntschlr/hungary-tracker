@@ -220,3 +220,12 @@
     font-size: 0.85rem;
   }
 }
+
+.actions-section { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+.backup-button { border: 0; border-radius: 8px; padding: 12px 24px; background: #fff; color: #302563; font: inherit; font-weight: 600; cursor: pointer; }
+.backup-button:hover { background: #eef2ff; }
+button:focus-visible, input:focus-visible { outline: 3px solid #facc15; outline-offset: 3px; }
+.storage-warning { padding: 16px; margin-bottom: 24px; border-radius: 8px; color: #713f12; background: #fef3c7; }
+.backup-status { margin-top: 16px; color: #fff; text-align: center; }
+.tracker-footer p + p { margin-top: 12px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
